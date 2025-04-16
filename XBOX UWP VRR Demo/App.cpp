@@ -83,22 +83,6 @@ void App::SetWindow(CoreWindow^ window)
         ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDisplayContentsInvalidated);
 
     m_deviceResources->SetWindow(window);
-    
-    // Request to enter fullscreen mode
-    ApplicationView^ applicationView = ApplicationView::GetForCurrentView();
-    if (!applicationView->IsFullScreenMode)
-    {
-        bool success = applicationView->TryEnterFullScreenMode();
-        if (!success)
-        {
-            OutputDebugString(L"App::SetWindow - Failed to enter fullscreen mode.\n");
-        }
-        else
-        {
-            OutputDebugString(L"App::SetWindow - Successfully entered fullscreen mode.\n");
-            // Force a window size update after entering fullscreen
-        }
-    }
 }
 
 // Initializes scene resources, or loads a previously saved app state.
@@ -146,6 +130,23 @@ void App::OnActivated(CoreApplicationView^ applicationView, IActivatedEventArgs^
 {
 	// Run() won't start until the CoreWindow is activated.
 	CoreWindow::GetForCurrentThread()->Activate();
+
+	// Request to enter fullscreen mode
+	ApplicationView^ applicationView2 = ApplicationView::GetForCurrentView();
+	if (!applicationView2->IsFullScreenMode)
+	{
+		bool success = applicationView2->TryEnterFullScreenMode();
+		if (!success)
+		{
+			OutputDebugString(L"App::SetWindow - Failed to enter fullscreen mode.\n");
+		}
+		else
+		{
+			OutputDebugString(L"App::SetWindow - Successfully entered fullscreen mode.\n");
+			OnWindowSizeChanged(CoreWindow::GetForCurrentThread(), nullptr);
+		}
+	}
+
 }
 
 void App::OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
